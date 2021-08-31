@@ -62,8 +62,10 @@
   - name: setup vagrant
     shell: vagrant init -f generic/ubuntu2004
 
-  - name: vagrant up
-    shell: vagrant up
+  - name: predefine vagrant-libvirt network
+    get_url:
+      url: https://raw.githubusercontent.com/mauilion/gcp-vagrant/master/vagrant-libvirt.yaml
+      dst: /tmp/vagrant=libvirt.yaml
 
-  - name: cleanup
-   hell: vagrant destroy -f
+  - name: create the network
+    shell: virsh net-define --file /tmp/vagrant-libvirt.yaml
