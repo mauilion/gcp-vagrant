@@ -1,0 +1,69 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: add vagrant repo key
+    ansible.builtin.apt_key:
+      url: https://apt.releases.hashicorp.com/gpg
+      state: present
+
+  - name: add vagrant repo
+    ansible.builtin.apt_repository:
+      repo: deb [arch=amd64] https://apt.releases.hashicorp.com focal main
+      state: present
+
+  - name: Install Packages
+    apt:
+      name:
+      - qemu
+      - libvirt-daemon-system
+      - libvirt-clients
+      - libxslt-dev
+      - libxml2-dev
+      - libvirt-dev
+      - zlib1g-dev
+      - ruby-dev
+      - ruby-libvirt
+      - ebtables
+      - dnsmasq-base
+      - vagrant
+      - ubuntu-dev-tools
+      - tmate
+      - qemu-kvm
+      - qemu-utils
+      state: latest
+
+  - name: Packages remove
+    apt:
+      name:
+      - nano
+      state: absent
+      cache_valid_time: 3600
+
+  - name: add dcooley to groups
+    ansible.builtin.user:
+      name: dcooley
+      shell: /bin/bash
+      groups: libvirt,libvirt-qemu,libvirt-dnsmasq
+      append: yes
+
+- hosts: all
+  become: no
+  roles:
+    - role: diodonfrost.vagrant
+      vars:
+        vagrant_plugins:
+        - vagrant-libvirt
+        - vagrant-hostmanager
+
+- hosts: all
+  become: no
+  tasks:
+  - name: setup vagrant
+    shell: vagrant init -f generic/ubuntu2004
+
+  - name: vagrant up
+    shell: vagrant up
+
+  - name: cleanup
+   hell: vagrant destroy -f
