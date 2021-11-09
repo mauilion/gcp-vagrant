@@ -65,7 +65,7 @@
   - name: predefine vagrant-libvirt network
     get_url:
       url: https://raw.githubusercontent.com/mauilion/gcp-vagrant/master/vagrant-libvirt.yaml
-      dst: /tmp/vagrant=libvirt.yaml
+      dest: /tmp/vagrant-libvirt.yaml
 
   - name: create the network
     shell: virsh net-define --file /tmp/vagrant-libvirt.yaml
